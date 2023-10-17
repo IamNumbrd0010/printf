@@ -1,0 +1,59 @@
+#include "main.h"
+
+/**
+ * _printf - Print output according to a format.
+ * @format: A format string with directives.
+ *
+ * Return: The number of characters printed (excluding the null byte).
+ */
+int _printf(const char *format, ...)
+{
+	va_list args;
+	int printed_chars = 0;
+	char c;
+
+	if (format == NULL)
+		return (-1);
+
+	va_start(args, format);
+
+	while ((c = *format))
+	{
+		if (c != '%')
+		{
+			write(1, &c, 1);
+			printed_chars++;
+		}
+		else if (c == '%' && format[1] == '%')
+		{
+			write(1, &c, 1);
+			printed_chars++;
+			format++;
+		}
+		else if (c == '%' && format[1] == 'c')
+		{
+			char ch = va_arg(args, int);
+			write(1, &ch, 1);
+			printed_chars++;
+			format++;
+		}
+		else if (c == '%' && format[1] == 's')
+		{
+			char *str = va_arg(args, char *);
+			if (str == NULL)
+				str = "(null)";
+			while (*str)
+			{
+				write(1, str, 1);
+				str++;
+				printed_chars++;
+			}
+			format++;
+		}
+		format++;
+	}
+
+	va_end(args);
+
+	return (printed_chars);
+}
